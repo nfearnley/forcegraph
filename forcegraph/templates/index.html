@@ -1,0 +1,90 @@
+{% extends "bootstrap/base.html" %}
+
+{% block styles %}
+{{super()}}
+    <style>
+      html
+      {
+        height: 100%;
+      }
+      body
+      {
+        height: 100%;
+      }
+      svg.graph
+      {
+        display: block;
+        height: 100%;
+        width: 100%;
+      }
+      rect.bg
+      {
+        height: 100%;
+        width: 100%;
+      }
+
+      .node circle
+      {
+        fill: orange;
+        stroke: brown;
+      }
+      .node text {
+        display: none;
+        font: 10px sans-serif;
+        fill: pink;
+      }
+      .node:hover circle
+      {
+        fill: purple;
+      }
+      .node:hover text {
+        display: inline;
+      }
+      .cell
+      {
+        fill: none;
+        pointer-events: all;
+      }
+      .link {
+        stroke-width: 1.5px;
+      }
+
+    </style>
+{% endblock %}
+
+{% block title %}IRC log force graph{% endblock %}
+
+{% block navbar %}
+    <div class="navbar navbar-fixed-top">
+      <!-- ... -->
+    </div>
+{% endblock %}
+
+{% block content %}
+    <svg class="graph" >
+      <g class="background">
+        <rect class="bg"></rect>
+        <g class="stars" />
+      </g>
+      <g class="foreground" >
+        <g class="links" />
+        <g class="nodes" />
+      </g>
+    </svg>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+    <script src="{{ bootstrap_find_resource('d3.js', cdn='d3') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/stars.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/forcegraph.js') }}"></script>
+    <script>starfield(".stars")</script>
+    <script>
+      var sim;
+      var query = {"nick": "Natalie", "network": "freenode", "depth": 20};
+      $.getJSON("/nodes", query, function(json){
+        sim = forcegraph(".nodes", ".links", json.nodes, json.links);
+      });
+    </script>
+{% endblock %}
